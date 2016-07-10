@@ -120,7 +120,8 @@ class Syscall
 
   static void trace();
 
+  static size_t getkeyinfo();
+
   private:
   //helper functions
 };
-

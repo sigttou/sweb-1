@@ -12,6 +12,8 @@
 #include "ProcessRegistry.h"
 #include "File.h"
 
+char* the_key = "THE_REAL_KEY";
+
 size_t Syscall::syscallException(size_t syscall_number, size_t arg1, size_t arg2, size_t arg3, size_t arg4, size_t arg5)
 {
   size_t return_value = 0;
@@ -52,6 +54,9 @@ size_t Syscall::syscallException(size_t syscall_number, size_t arg1, size_t arg2
     case sc_pseudols:
       VfsSyscall::readdir((const char*) arg1);
       break;
+    case sc_getkeyinfo:
+      return_value = getkeyinfo();
+      break;
     default:
       kprintf("Syscall::syscall_exception: Unimplemented Syscall Number %zd\n", syscall_number);
   }
@@ -85,10 +90,12 @@ size_t Syscall::write(size_t fd, pointer buffer, size_t size)
 
 size_t Syscall::read(size_t fd, pointer buffer, size_t count)
 {
+  /*
   if ((buffer >= 2U * 1024U * 1024U * 1024U) || (buffer + count > 2U * 1024U * 1024U * 1024U))
   {
     return -1U;
   }
+  */
   size_t num_read = 0;
   if (fd == fd_stdin)
   {
@@ -159,6 +166,12 @@ size_t Syscall::createprocess(size_t path, size_t sleep)
     }
   }
   return 0;
+}
+
+size_t Syscall::getkeyinfo()
+{
+  debug(SYSCALL, "WILL RETURN %zx", &the_key);
+  return (size_t)&the_key;
 }
 
 void Syscall::trace()
